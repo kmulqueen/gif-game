@@ -7,6 +7,8 @@ app.use(express.json({ extended: false }));
 
 connectDB();
 
-app.use("/", (req, res) => res.send("Home Page"));
+app.use("/api/users", require("./routes/api/users"));
+app.use("/api/game", require("./routes/api/game"));
+app.use("/api/lobby", require("./routes/api/lobby"));
 
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
