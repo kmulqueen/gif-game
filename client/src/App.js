@@ -1,25 +1,20 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Fragment } from "react";
+import { Provider } from "react-redux";
+import store from "./store";
+
+import CreateUser from "./components/Users/CreateUser";
+import LobbyList from "./components/Lobby/LobbyList";
+import CreateLobby from "./components/Lobby/CreateLobby";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <Fragment>
+        <CreateUser />
+        <LobbyList />
+        <CreateLobby />
+      </Fragment>
+    </Provider>
   );
 }
 
