@@ -1,20 +1,12 @@
 import axios from "axios";
-import { CREATE_USER, USER_ERROR } from "./types";
+import { GET_ALL_USERS, USER_ERROR } from "./types";
 
-export const createUser = ({ name }) => async dispatch => {
-  const config = {
-    headers: {
-      "Content-Type": "application/json"
-    }
-  };
-
-  const body = JSON.stringify({ name });
-
+export const getAllUsers = () => async dispatch => {
   try {
-    const res = await axios.post("/api/users", body, config);
+    const res = await axios.get("/api/users");
 
     dispatch({
-      type: CREATE_USER,
+      type: GET_ALL_USERS,
       payload: res.data
     });
   } catch (error) {

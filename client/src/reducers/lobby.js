@@ -1,4 +1,12 @@
-import { GET_LOBBIES, LOBBY_ERROR, JOIN_LOBBY } from "../actions/types";
+import {
+  GET_LOBBIES,
+  GET_LOBBY,
+  LOBBY_ERROR,
+  CREATE_LOBBY,
+  JOIN_LOBBY,
+  LEAVE_LOBBY,
+  CLEAR_LOBBY
+} from "../actions/types";
 
 const initialState = {
   lobby: null,
@@ -18,9 +26,43 @@ export default function(state = initialState, action) {
         loading: false
       };
     case JOIN_LOBBY:
+    case GET_LOBBY:
       return {
         ...state,
         lobby: payload,
+        lobbies: state.lobbies.map((lobby, i) => {
+          if (lobby._id === payload._id) {
+            return (state.lobbies[i] = payload);
+          } else {
+            return lobby;
+          }
+        }),
+        loading: false
+      };
+    case LEAVE_LOBBY:
+      return {
+        ...state,
+        lobby: null,
+        lobbies: state.lobbies.map((lobby, i) => {
+          if (lobby._id === payload._id) {
+            return (state.lobbies[i] = payload);
+          } else {
+            return lobby;
+          }
+        }),
+        loading: false
+      };
+    case CREATE_LOBBY:
+      return {
+        ...state,
+        lobby: payload,
+        lobbies: [...state.lobbies, payload],
+        loading: false
+      };
+    case CLEAR_LOBBY:
+      return {
+        ...state,
+        lobby: null,
         loading: false
       };
     case LOBBY_ERROR:

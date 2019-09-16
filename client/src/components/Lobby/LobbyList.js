@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { getLobbies } from "../../actions/lobby";
-import LobbyItem from "./LobbyItem";
+import LobbyListItem from "./LobbyListItem";
 
 const LobbyList = ({ getLobbies, lobbies }) => {
   useEffect(() => {
@@ -13,7 +13,7 @@ const LobbyList = ({ getLobbies, lobbies }) => {
     <div>
       <h1>Lobby List</h1>
       {lobbies.map(lobby => (
-        <LobbyItem lobby={lobby} key={lobby._id} />
+        <LobbyListItem lobby={lobby} key={lobby._id} />
       ))}
     </div>
   );

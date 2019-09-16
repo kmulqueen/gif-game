@@ -1,21 +1,27 @@
 import React, { Fragment } from "react";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { joinLobby } from "../../actions/lobby";
 
-const LobbyItem = ({ lobby, user, joinLobby }) => {
+const LobbyListItem = ({ lobby, user, joinLobby }) => {
   return (
     <Fragment>
       <h3>{lobby.name}</h3>
       <p>Hosted by: {lobby.host.name}</p>
       <p>Players: {lobby.players.map(player => player.name)}</p>
       <p>Question: {lobby.game.question}</p>
-      <button onClick={() => joinLobby(lobby._id, user._id)}>Join Lobby</button>
+      <Link
+        onClick={() => joinLobby(lobby._id, user._id)}
+        to={`/lobby/${lobby._id}`}
+      >
+        Join Lobby
+      </Link>
     </Fragment>
   );
 };
 
-LobbyItem.propTypes = {
+LobbyListItem.propTypes = {
   lobby: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired
 };
@@ -27,4 +33,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   { joinLobby }
-)(LobbyItem);
+)(LobbyListItem);

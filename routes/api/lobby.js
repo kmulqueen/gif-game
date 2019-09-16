@@ -9,12 +9,15 @@ router.get("/test", (req, res) => res.send("Lobbys works"));
 // Create new lobby
 router.post("/:user_id", async (req, res) => {
   try {
-    const user = await User.findById(req.params.user_id);
+    const user = await User.findById(req.params.user_id)
+      .select("-password")
+      .select("-email");
     if (!user) {
       return res
         .status(404)
         .json({ msg: "Can't create lobby under a user that does not exist." });
     }
+
     const { name } = req.body;
     let lobby = await Lobby.findOne({ name });
 
@@ -24,13 +27,33 @@ router.post("/:user_id", async (req, res) => {
         .json({ msg: "Lobby with that name already exists" });
     }
 
-    let question = "Question Will Load When Players Are Ready";
-    let game = new Game({ question });
+    const gameSetup = {
+      start: false,
+      question: "Question Will Load When Game Has Started.",
+      playersReady: [],
+      players: [
+        {
+          player: user,
+          ready: false,
+          gifPick: "",
+          votedFor: "",
+          votes: 0
+        }
+      ]
+    };
+    const game = new Game(gameSetup);
+    game.populate("name");
     await game.save();
 
-    lobby = new Lobby({ name, host: user, players: [user], game });
+    let lobbySetup = {
+      name,
+      host: user,
+      players: [user],
+      game
+    };
+    lobby = new Lobby(lobbySetup);
     await lobby.save();
-    res.status(200).json({ msg: "Lobby Created", lobby });
+    res.status(200).json(lobby);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
@@ -41,15 +64,33 @@ router.post("/:user_id", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     let lobbies = await Lobby.find()
-      .populate("host")
-      .populate("game")
-      .populate("players");
+      .populate("host", ["name", "_id"])
+      .populate("game");
 
     if (!lobbies.length) {
       return res.status(404).json({ msg: "No lobbies have been created." });
     }
 
     res.status(200).json(lobbies);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error.");
+  }
+});
+
+// Get Lobby by ID
+router.get("/:lobby_id", async (req, res) => {
+  try {
+    const lobby = await Lobby.findById(req.params.lobby_id)
+      .populate("host")
+      .populate("game")
+      .populate("players");
+
+    if (!lobby) {
+      return res.status(404).json({ msg: "Lobby not found." });
+    }
+
+    res.status(200).json(lobby);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error.");
@@ -80,11 +121,14 @@ router.put("/:lobby_id/:player_id", async (req, res) => {
       .populate("host")
       .populate("game")
       .populate("players");
+
     if (!lobby) {
       return res.status(404).json({ msg: "Lobby doesn't exist." });
     }
 
-    let player = await User.findById(req.params.player_id);
+    let player = await User.findById(req.params.player_id)
+      .select("-password")
+      .select("-email");
     if (!player) {
       return res.status(404).json({ msg: "Player doesn't exist" });
     }
@@ -113,11 +157,12 @@ router.delete("/:lobby_id/:player_id", async (req, res) => {
       .populate("host")
       .populate("game")
       .populate("players");
+
     if (!lobby) {
       return res.status(404).json({ msg: "Lobby doesn't exist" });
     }
 
-    let player = await User.findById(req.params.player_id);
+    let player = await User.findById(req.params.player_id).select("-password");
     if (!player) {
       return res.status(404).json({ msg: "Player not found" });
     }
@@ -140,10 +185,23 @@ router.delete("/:lobby_id/:player_id", async (req, res) => {
     lobby.players = updatedLobby;
 
     await lobby.save();
-    res.status(200).json({ msg: "You have left the lobby", updatedLobby });
+    res.status(200).json(lobby);
   } catch (error) {
     console.error(error);
     res.status(500).send("Server Error");
+  }
+});
+
+// Delete all lobbies
+router.delete("/", async (req, res) => {
+  try {
+    const lobbies = await Lobby.deleteMany({}, err => {
+      if (err) throw err;
+    });
+
+    res.status(200).json(lobbies);
+  } catch (error) {
+    console.error(error);
   }
 });
 
