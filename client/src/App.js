@@ -1,42 +1,25 @@
-import React, { Fragment, useEffect } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-// Redux
-import { Provider } from "react-redux";
-import store from "./store";
-import setAuthToken from "./utils/setAuthToken";
-import { loadUser } from "./actions/auth";
-
-// Components
-import Register from "./components/Auth/Register";
-import Login from "./components/Auth/Login";
-import LobbyList from "./components/Lobby/LobbyList";
-import CreateLobby from "./components/Lobby/CreateLobby";
-import UserList from "./components/Users/UserList";
-import Lobby from "./components/Lobby/Lobby";
-
-// Check for user's token in local storage
-if (localStorage.token) {
-  setAuthToken(localStorage.token);
-}
+import React from 'react';
+import logo from './logo.svg';
+import './App.css';
 
 function App() {
-  useEffect(() => {
-    store.dispatch(loadUser());
-  }, []);
-
   return (
-    <Provider store={store}>
-      <Router>
-        <Fragment>
-          <Route exact path="/register" component={Register} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/users" component={UserList} />
-          <Route exact path="/lobbies" component={LobbyList} />
-          <Route exact path="/create-lobby" component={CreateLobby} />
-          <Route exact path="/lobby/:id" component={Lobby} />
-        </Fragment>
-      </Router>
-    </Provider>
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
+      </header>
+    </div>
   );
 }
 

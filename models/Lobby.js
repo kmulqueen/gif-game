@@ -12,7 +12,8 @@ const LobbySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Game"
   },
-  players: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
+  players: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  readyPlayers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
 });
 
 module.exports = Lobby = mongoose.model("Lobby", LobbySchema);

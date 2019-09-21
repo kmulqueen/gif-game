@@ -11,6 +11,20 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  playerInfo: {
+    ready: {
+      type: Boolean,
+      default: false
+    },
+    role: {
+      type: String
+    },
+    cards: [],
+    deck: [],
+    submission: {
+      type: String
+    }
   }
 });
 

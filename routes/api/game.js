@@ -20,123 +20,31 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Player Ready
-router.post("/:game_id/:player_id", async (req, res) => {
+// Start Game
+router.post("/:game_id", async (req, res) => {
   try {
-    const player = await User.findById(req.params.player_id)
-      .select("-password")
-      .select("-email");
-    const game = await Game.findById(req.params.game_id)
+    let game = await Game.findById(req.params.game_id)
       .populate("name")
       .populate("players.player", ["name", "_id"]);
-
-    if (!player) {
-      return res.status(404).json({ msg: "Invalid player " });
-    }
-    if (!game) {
-      return res.status(404).json({ msg: "Invalid game " });
-    }
-
-    let alreadyReady = game.playersReady.filter(
-      item => item._id.toString() === player._id.toString()
-    );
-
-    if (alreadyReady.length) {
-      return res.status(400).json({ msg: "User already ready" });
-    }
-
-    // Init player setup
-    const playerSetup = {
-      player: player,
-      ready: true,
-      gifPick: "",
-      votedFor: "",
-      votes: 0
-    };
-
-    // Check if player exists in players array
-    const exists = game.players.filter(
-      item => item.player._id.toString() === player._id.toString()
-    );
-    // If so, update that player with a ready status of true
-    if (exists.length) {
-      game.players.map((item, i) => {
-        if (item.player._id.toString() === player._id.toString()) {
-          game.playersReady.push(player);
-          game.players[i] = playerSetup;
-        }
-      });
-    } else {
-      game.playersReady.push(player);
-      game.players.push(playerSetup);
-    }
-
-    // Query db update
-    const updatedPlayersReady = game.playersReady;
-    const updatedPlayers = game.players;
-    const conditions = { _id: req.params.game_id };
-    const update = {
-      playersReady: updatedPlayersReady,
-      players: updatedPlayers
-    };
-
-    await Game.findByIdAndUpdate(conditions, update, (err, doc) => {
-      doc.save();
-    });
-
-    res.status(200).json(game);
-  } catch (error) {
-    console.error(error);
-  }
-});
-
-// Start Game
-router.put("/:lobby_id/:game_id", async (req, res) => {
-  try {
-    let lobby = await Lobby.findById(req.params.lobby_id);
-    if (!lobby) {
-      return res.status(404).json({ msg: "Lobby doesn't exist" });
-    }
-
-    let game = await Game.findById(req.params.game_id);
     if (!game) {
       return res.status(404).json({ msg: "Game doesn't exist" });
-    }
-
-    if (lobby.game._id.toString() !== game._id.toString()) {
-      return res
-        .status(401)
-        .json({ msg: "Check that you have the right lobby or game" });
     }
 
     game.start = true;
-    lobby.game = game;
 
     await game.save();
-    await lobby.save();
     res.status(200).json(game);
-
-    // res.status(200).json(lobby)
   } catch (error) {}
 });
 
-// Update Game Question in Lobby
-router.post("/:lobby_id/:game_id", async (req, res) => {
+// Update Game Question
+router.put("/:game_id", async (req, res) => {
   try {
-    let lobby = await Lobby.findById(req.params.lobby_id);
-    if (!lobby) {
-      return res.status(404).json({ msg: "Lobby doesn't exist" });
-    }
-
-    let game = await Game.findById(req.params.game_id);
+    let game = await Game.findById(req.params.game_id)
+      .populate("name")
+      .populate("players.player", ["name", "_id"]);
     if (!game) {
       return res.status(404).json({ msg: "Game doesn't exist" });
-    }
-
-    if (lobby.game._id.toString() !== game._id.toString()) {
-      return res
-        .status(401)
-        .json({ msg: "Check that you have the right lobby or game" });
     }
 
     // For now only questions with 1 pick answers are allowed

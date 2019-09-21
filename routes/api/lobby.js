@@ -29,20 +29,16 @@ router.post("/:user_id", async (req, res) => {
 
     const gameSetup = {
       start: false,
-      question: "Question Will Load When Game Has Started.",
-      playersReady: [],
-      players: [
-        {
-          player: user,
-          ready: false,
-          gifPick: "",
-          votedFor: "",
-          votes: 0
-        }
-      ]
+      gif: null,
+      players: [],
+      whiteCardPlayers: [],
+      blackCardPlayer: null,
+      whiteCardPicks: [],
+      blackCardPick: null,
+      gameWinner: null
     };
     const game = new Game(gameSetup);
-    game.populate("name");
+
     await game.save();
 
     let lobbySetup = {
@@ -65,7 +61,8 @@ router.get("/", async (req, res) => {
   try {
     let lobbies = await Lobby.find()
       .populate("host", ["name", "_id"])
-      .populate("game");
+      .populate("game")
+      .populate("players");
 
     if (!lobbies.length) {
       return res.status(404).json({ msg: "No lobbies have been created." });

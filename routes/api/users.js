@@ -38,7 +38,15 @@ router.post(
           .json({ msg: "User with that email already exists." });
       }
 
-      user = new User({ name, email, password });
+      const playerInfo = {
+        ready: false,
+        role: "",
+        cards: [],
+        deck: [],
+        submission: ""
+      };
+
+      user = new User({ name, email, password, playerInfo });
 
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
@@ -75,6 +83,28 @@ router.get("/", async (req, res) => {
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
+  }
+});
+
+// Ready Player
+router.put("/:player_id", async (req, res) => {
+  try {
+    const filter = { _id: req.params.player_id };
+    const update = {
+      playerInfo: {
+        ...User.playerInfo,
+        ready: true
+      }
+    };
+
+    let doc = await User.findOneAndUpdate(filter, update, {
+      new: true,
+      select: "-password"
+    });
+
+    res.json(doc);
+  } catch (error) {
+    console.error(error);
   }
 });
 
