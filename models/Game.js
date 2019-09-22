@@ -6,7 +6,23 @@ const GameSchema = new mongoose.Schema({
     default: false
   },
   gif: {
-    type: String
+    gifURL: {
+      type: String
+    },
+    gifImage: {
+      height: {
+        type: String
+      },
+      size: {
+        type: String
+      },
+      url: {
+        type: String
+      },
+      width: {
+        type: String
+      }
+    }
   },
   players: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   whiteCardPlayers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
