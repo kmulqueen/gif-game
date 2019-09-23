@@ -48,7 +48,7 @@ module.exports = {
       const gameSetup = {
         start: false,
         gif: "",
-        players: [user],
+        players: [],
         whiteCardPlayers: [],
         blackCardPlayer: null,
         whiteCardPicks: [],
@@ -124,6 +124,33 @@ module.exports = {
       lobby.players = players;
       await lobby.save();
       res.json(user);
+    } catch (error) {
+      res.status(300).json(error);
+    }
+  },
+  getReadyPlayers: async (req, res) => {
+    try {
+      const lobby = await Lobby.findById(req.params.lobby_id)
+        .populate("players", ["playerInfo", "_id", "name"])
+        .populate("game");
+
+      const gameID = lobby.game._id;
+      const game = await Game.findById(gameID);
+      lobby.players.map(player => {
+        if (player.playerInfo.ready) {
+          if (lobby.readyPlayers.includes(player._id)) {
+            return null;
+          } else {
+            lobby.readyPlayers.push(player);
+          }
+        } else return player;
+      });
+
+      game.players = lobby.readyPlayers;
+
+      await game.save();
+      await lobby.save();
+      res.json(game);
     } catch (error) {
       res.status(300).json(error);
     }

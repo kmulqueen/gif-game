@@ -1,9 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const Game = require("../../models/Game");
-const Lobby = require("../../models/Lobby");
-const User = require("../../models/User");
-const questions = require("../../questions/questions.json");
 const gameController = require("../../controllers/gameController");
 
 router.get("/test", (req, res) => res.send("Games works"));
@@ -16,7 +12,7 @@ router.get("/:id", gameController.getGameByID);
 // Start Game
 router.post("/:game_id", gameController.startGame);
 
-// Update Game Question
+// Update Game Gif
 router.put("/:game_id", gameController.updateGif);
 
 // Delete all games

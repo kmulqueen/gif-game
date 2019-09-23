@@ -1,7 +1,6 @@
 const Game = require("../models/Game");
 const config = require("config");
 const fetch = require("node-fetch");
-const questions = require("../questions/questions.json");
 
 module.exports = {
   getAllGames: async (req, res) => {

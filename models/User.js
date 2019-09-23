@@ -17,8 +17,8 @@ const UserSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     },
-    role: {
-      type: String
+    votes: {
+      type: Number
     },
     cards: [],
     deck: [],

@@ -20,6 +20,9 @@ router.post("/join/:lobby_id", auth, lobbyController.joinLobby);
 // Player leave lobby
 router.delete("/leave/:lobby_id", auth, lobbyController.leaveLobby);
 
+// Get Ready Players
+router.get("/ready/:lobby_id", lobbyController.getReadyPlayers);
+
 // Delete Lobby by ID
 router.delete("/delete/:lobby_id", auth, lobbyController.deleteLobby);
 // Delete all lobbies
