@@ -1,7 +1,7 @@
 import React from "react";
 import { mount } from "enzyme";
 
-import Lobby from "components/Lobby";
+import Lobby from "components/Lobby/Lobby";
 
 let wrapped;
 beforeEach(() => {
