@@ -1,0 +1,2 @@
+export const CREATE_LOBBY = "CREATE_LOBBY";
+export const GET_ALL_LOBBIES = "GET_ALL_LOBBIES";
