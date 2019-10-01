@@ -1,4 +1,4 @@
-import { CREATE_LOBBY } from "actions/types";
+import { CREATE_LOBBY, GET_ALL_LOBBIES } from "actions/types";
 
 export default function(state = [], action) {
   const { type, payload } = action;
@@ -6,6 +6,9 @@ export default function(state = [], action) {
   switch (type) {
     case CREATE_LOBBY:
       return [...state, payload];
+    case GET_ALL_LOBBIES:
+      const lobbies = payload.map(lobby => lobby.name);
+      return [...state, ...lobbies];
     default:
       return state;
   }

@@ -24,8 +24,6 @@ const CreateLobby = ({ createLobby }) => {
         <input type="text" onChange={handleChange} value={name} />
         <button type="submit">Create</button>
       </form>
-      <h4>Lobby List</h4>
-      <LobbyList />
     </div>
   );
 };
